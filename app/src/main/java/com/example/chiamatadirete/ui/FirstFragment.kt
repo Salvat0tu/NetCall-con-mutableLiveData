@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.chiamatadirete.MyApplication
-import com.example.chiamatadirete.data.JokeData
 import com.example.chiamatadirete.databinding.FragmentFirstBinding
 
 /**
@@ -38,8 +37,10 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
             jokeViewModel.getJoke()
         }
+        observeData()
     }
-    private fun observeData(){
+
+    private fun observeData() {
         jokeViewModel.result.observe(viewLifecycleOwner) { jokeData ->
             if (jokeData != null) {
                 binding.textviewFirst.text = jokeData.punchline
@@ -48,13 +49,8 @@ class FirstFragment : Fragment() {
         }
     }
 
-private fun setJokeText(it: JokeData) {
-    binding.textviewFirst.text = it.punchline
-    binding.textviewSecond.text = it.setup
-}
-
-override fun onDestroyView() {
-    super.onDestroyView()
-    _binding = null
-}
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
