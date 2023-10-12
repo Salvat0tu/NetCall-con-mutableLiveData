@@ -1,13 +1,12 @@
-package com.example.chiamatadirete
+package com.example.chiamatadirete.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import com.example.chiamatadirete.network.JokeData
-import com.example.chiamatadirete.network.JokeViewModel
+import com.example.chiamatadirete.MyApplication
+import com.example.chiamatadirete.data.JokeData
 import com.example.chiamatadirete.databinding.FragmentFirstBinding
 
 /**
@@ -15,10 +14,9 @@ import com.example.chiamatadirete.databinding.FragmentFirstBinding
  */
 class FirstFragment : Fragment() {
 
-    private val jokeViewModel: JokeViewModel by activityViewModels()
 
+    private lateinit var jokeViewModel: JokeViewModel
     private var _binding: FragmentFirstBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,25 +32,29 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        jokeViewModel =
+            (requireActivity().application as MyApplication).viewModelFactory.create(JokeViewModel::class.java)
+
         binding.buttonFirst.setOnClickListener {
             jokeViewModel.getJoke()
         }
-        jokeViewModel.result.observe(viewLifecycleOwner) {
-            if (it != null) {
-                setJokeText(it)
+    }
+    private fun observeData(){
+        jokeViewModel.result.observe(viewLifecycleOwner) { jokeData ->
+            if (jokeData != null) {
+                binding.textviewFirst.text = jokeData.punchline
+                binding.textviewSecond.text = jokeData.setup
             }
-
-
         }
     }
 
-    private fun setJokeText(it: JokeData) {
-        binding.textviewFirst.text = it.punchline
-        binding.textviewSecond.text = it.setup
-    }
+private fun setJokeText(it: JokeData) {
+    binding.textviewFirst.text = it.punchline
+    binding.textviewSecond.text = it.setup
+}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+}
 }
